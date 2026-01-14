@@ -1,66 +1,53 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { ExchangeRateResponse, NearbyStationsResponse, GasStation } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const fetchCurrentExchangeRate = async (): Promise<ExchangeRateResponse> => {
   try {
+    // When using googleSearch, do NOT force JSON schema as it conflicts with the tool output.
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: "What is the current exchange rate for 1 USD to CAD? Return a JSON object with a single field 'rate' containing the numeric value.",
+      contents: "What is the current exchange rate for 1 USD to CAD? Answer with just the numeric rate.",
       config: {
         tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            rate: {
-              type: Type.NUMBER,
-              description: "The exchange rate where 1 USD equals this many CAD.",
-            },
-          },
-          required: ["rate"],
-        },
       },
     });
 
-    const text = response.text;
-    if (!text) {
-      throw new Error("No response text from Gemini");
-    }
+    const text = response.text ? String(response.text) : "";
+    // Extract the first floating point number from the text
+    const match = text.match(/(\d+(\.\d+)?)/);
+    const rate = match ? parseFloat(match[0]) : 1.35;
 
-    const data = JSON.parse(text);
-    const rate = data.rate;
-
-    // Extract sources from grounding metadata
+    // Extract sources from grounding metadata safely
     const sources: string[] = [];
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     
-    if (chunks) {
+    if (Array.isArray(chunks)) {
       chunks.forEach((chunk: any) => {
-        if (chunk.web?.uri) {
+        if (chunk && chunk.web && typeof chunk.web.uri === 'string') {
           sources.push(chunk.web.uri);
         }
       });
     }
 
+    const finalRate = (typeof rate === 'number' && !isNaN(rate)) ? rate : 1.35;
+
     return {
-      rate,
-      sources,
+      rate: finalRate,
+      sources: sources,
     };
   } catch (error) {
     console.error("Failed to fetch exchange rate:", error);
-    // Fallback if API fails or quota exceeded, approx rate
     return {
       rate: 1.35,
-      sources: ["Fallback (API Error)"],
+      sources: [],
     };
   }
 };
 
 export const fetchNearbyGasStations = async (lat: number, lng: number): Promise<NearbyStationsResponse> => {
   try {
-    // Using gemini-2.5-flash for Maps grounding as per SDK requirements
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash", 
       contents: "Find 3 gas stations nearby. For each, strictly follow this format on a new line: Name | Address | Price (approx). If price is unknown, say 'N/A'. Do not include any intro or outro text.",
@@ -77,11 +64,11 @@ export const fetchNearbyGasStations = async (lat: number, lng: number): Promise<
       },
     });
 
-    const text = response.text || "";
-    // Simple parsing based on the requested pipe format
+    const text = response.text ? String(response.text) : "";
+    // Robust parsing ensuring strings
     const lines = text.split('\n').filter(l => l.includes('|'));
     const stations: GasStation[] = lines.map(line => {
-        const parts = line.split('|').map(s => s.trim());
+        const parts = line.split('|').map(s => String(s).trim());
         return { 
           name: parts[0] || "Unknown Station", 
           address: parts[1] || "Unknown Address", 
@@ -89,13 +76,14 @@ export const fetchNearbyGasStations = async (lat: number, lng: number): Promise<
         };
     });
 
-    // Extract sources (Maps attribution)
+    // Extract sources (Maps attribution) safely
     const sources: string[] = [];
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-    if (chunks) {
+    if (Array.isArray(chunks)) {
        chunks.forEach((chunk: any) => {
-        // Maps grounding often provides attribution via groundingChunks
-        if (chunk.web?.uri) sources.push(chunk.web.uri);
+        if (chunk && chunk.web && typeof chunk.web.uri === 'string') {
+            sources.push(chunk.web.uri);
+        }
        });
     }
 

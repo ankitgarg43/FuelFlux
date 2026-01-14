@@ -10,6 +10,9 @@ interface NearbyStationsProps {
 }
 
 export const NearbyStations: React.FC<NearbyStationsProps> = ({ stations, loading, onScan, error, hasPermission }) => {
+  // Safe error display
+  const errorMessage = typeof error === 'string' ? error : (error ? 'An unexpected error occurred' : null);
+
   return (
     <div className="w-full max-w-md md:max-w-4xl mt-6 animate-fade-in-up">
       <div className="bg-zinc-900/40 backdrop-blur-md rounded-2xl border border-zinc-800/50 overflow-hidden relative group p-6">
@@ -38,14 +41,14 @@ export const NearbyStations: React.FC<NearbyStationsProps> = ({ stations, loadin
         </div>
 
         {/* Error State */}
-        {error && (
+        {errorMessage && (
             <div className="p-3 mb-2 bg-red-900/20 border border-red-900/50 rounded-lg text-red-400 text-xs font-mono text-center">
-                {error}
+                {errorMessage}
             </div>
         )}
 
         {/* Content */}
-        {!hasPermission && !loading && stations.length === 0 && !error && (
+        {!hasPermission && !loading && stations.length === 0 && !errorMessage && (
              <div className="text-center py-6 border border-dashed border-zinc-800 rounded-xl">
                 <p className="text-zinc-600 text-xs font-mono">ENABLE GPS TO LOCATE STATIONS</p>
              </div>
