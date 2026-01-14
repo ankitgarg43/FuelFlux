@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { ExchangeRateResponse, GroundingSource } from "../types";
+import { ExchangeRateResponse, NearbyStationsResponse, GasStation } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -55,5 +55,54 @@ export const fetchCurrentExchangeRate = async (): Promise<ExchangeRateResponse> 
       rate: 1.35,
       sources: ["Fallback (API Error)"],
     };
+  }
+};
+
+export const fetchNearbyGasStations = async (lat: number, lng: number): Promise<NearbyStationsResponse> => {
+  try {
+    // Using gemini-2.5-flash for Maps grounding as per SDK requirements
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash", 
+      contents: "Find 3 gas stations nearby. For each, strictly follow this format on a new line: Name | Address | Price (approx). If price is unknown, say 'N/A'. Do not include any intro or outro text.",
+      config: {
+        tools: [{ googleMaps: {} }],
+        toolConfig: {
+          retrievalConfig: {
+            latLng: {
+              latitude: lat,
+              longitude: lng
+            }
+          }
+        }
+      },
+    });
+
+    const text = response.text || "";
+    // Simple parsing based on the requested pipe format
+    const lines = text.split('\n').filter(l => l.includes('|'));
+    const stations: GasStation[] = lines.map(line => {
+        const parts = line.split('|').map(s => s.trim());
+        return { 
+          name: parts[0] || "Unknown Station", 
+          address: parts[1] || "Unknown Address", 
+          price: parts[2] || "N/A" 
+        };
+    });
+
+    // Extract sources (Maps attribution)
+    const sources: string[] = [];
+    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    if (chunks) {
+       chunks.forEach((chunk: any) => {
+        // Maps grounding often provides attribution via groundingChunks
+        if (chunk.web?.uri) sources.push(chunk.web.uri);
+       });
+    }
+
+    return { stations, sources };
+
+  } catch (error) {
+    console.error("Maps error", error);
+    return { stations: [], sources: [] };
   }
 };

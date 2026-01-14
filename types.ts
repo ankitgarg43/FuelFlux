@@ -25,3 +25,15 @@ export interface HistoryItem {
   timestamp: number;
   sourceCurrency: 'USD' | 'CAD';
 }
+
+export interface GasStation {
+  name: string;
+  address: string;
+  price?: string;
+  distance?: string;
+}
+
+export interface NearbyStationsResponse {
+  stations: GasStation[];
+  sources: string[];
+}
