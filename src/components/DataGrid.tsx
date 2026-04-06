@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { format } from 'date-fns';
-import { MapPin, ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { MapPin, ArrowDown, ArrowUp, ArrowUpDown, Loader2 } from 'lucide-react';
 import { convertPrice } from '../lib/conversion';
+import { motion } from 'motion/react';
 
 type SortField = 'stationName' | 'distance' | 'fuelType' | 'price' | 'timestamp';
 type SortOrder = 'asc' | 'desc';
 
 export const DataGrid: React.FC = () => {
-  const { data, filters, preferredCurrency, preferredUnit } = useAppStore();
+  const { data, filters, preferredCurrency, preferredUnit, isLoading } = useAppStore();
   const [sortField, setSortField] = useState<SortField>('price');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
@@ -60,11 +61,32 @@ export const DataGrid: React.FC = () => {
 
   const currencySymbol = preferredCurrency === 'USD' ? '$' : preferredCurrency === 'EUR' ? '€' : 'C$';
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col relative">
       <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <h3 className="text-base font-display font-semibold text-slate-900 dark:text-white">Search Results</h3>
         <div className="flex items-center gap-2">
+          {isLoading && (
+            <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full animate-pulse">
+              <Loader2 size={12} className="animate-spin" />
+              Updating...
+            </span>
+          )}
           <span className="text-xs font-medium px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full flex items-center gap-1.5">
             {filteredAndSortedData.length} Stations Found
           </span>
@@ -92,10 +114,16 @@ export const DataGrid: React.FC = () => {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-            {filteredAndSortedData.length > 0 ? (
-              filteredAndSortedData.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+          {filteredAndSortedData.length > 0 ? (
+            <motion.tbody 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              key={data.length + filters.searchQuery} // Re-trigger animation on data change
+              className="divide-y divide-slate-200 dark:divide-slate-800"
+            >
+              {filteredAndSortedData.map((item) => (
+                <motion.tr variants={itemVariants} key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-medium text-slate-900 dark:text-slate-100">{item.stationName}</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
@@ -103,7 +131,7 @@ export const DataGrid: React.FC = () => {
                       {item.address}, {item.city}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono text-base">
                     {item.distance ? `${item.distance.toFixed(1)} mi` : '-'}
                   </td>
                   <td className="px-4 py-3">
@@ -111,22 +139,31 @@ export const DataGrid: React.FC = () => {
                       {item.fuelType}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                  <td className="px-4 py-3 font-mono font-medium text-emerald-600 dark:text-emerald-400 text-lg text-glow">
                     {currencySymbol}{item.convertedPrice.toFixed(3)}
                   </td>
-                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400 font-mono text-xs">
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400 font-mono text-sm">
                     {format(item.timestamp, 'HH:mm')}
                   </td>
-                </tr>
-              ))
-            ) : (
+                </motion.tr>
+              ))}
+            </motion.tbody>
+          ) : (
+            <tbody>
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
-                  No stations found. Try searching for a city or zip code.
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="animate-spin text-emerald-500" size={24} />
+                      <span>Scanning for stations...</span>
+                    </div>
+                  ) : (
+                    "No stations found. Try searching for a city or zip code."
+                  )}
                 </td>
               </tr>
-            )}
-          </tbody>
+            </tbody>
+          )}
         </table>
       </div>
     </div>

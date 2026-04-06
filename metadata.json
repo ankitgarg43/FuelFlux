@@ -1,5 +1,5 @@
 {
-  "name": "FuelFlux",
+  "name": "FluxFuel",
   "description": "A smart currency and unit converter for gas prices between USD/Gallon and CAD/Litre, powered by real-time exchange rates from Gemini.",
   "requestFramePermissions": [
     "geolocation"

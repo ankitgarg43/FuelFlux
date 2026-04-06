@@ -97,7 +97,7 @@ export const FilterPanel: React.FC = () => {
                 value={filters.searchQuery}
                 onChange={(e) => setFilter('searchQuery', e.target.value)}
                 placeholder="e.g. Seattle, WA"
-                className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 dark:text-white transition-all"
+                className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/50 dark:text-white transition-all font-medium"
               />
             </div>
             <button 
@@ -143,7 +143,7 @@ export const FilterPanel: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Max Price</label>
-            <span className="text-xs font-mono text-slate-500">{preferredCurrency} {filters.maxPrice.toFixed(2)}</span>
+            <span className="text-sm font-mono font-bold text-emerald-600 dark:text-emerald-400 text-glow">{preferredCurrency} {filters.maxPrice.toFixed(2)}</span>
           </div>
           <input
             type="range"

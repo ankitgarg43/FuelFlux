@@ -59,7 +59,7 @@ export const Analytics: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Average Price</p>
-            <p className="text-2xl font-display font-bold text-slate-900 dark:text-white">{currencySymbol}{stats.avg}</p>
+            <p className="text-3xl font-display font-bold text-slate-900 dark:text-white text-glow">{currencySymbol}{stats.avg}</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
             <Activity size={18} />
@@ -68,7 +68,7 @@ export const Analytics: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Lowest Price</p>
-            <p className="text-2xl font-display font-bold text-slate-900 dark:text-white">{currencySymbol}{stats.min}</p>
+            <p className="text-3xl font-display font-bold text-emerald-600 dark:text-emerald-400 text-glow">{currencySymbol}{stats.min}</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
             <TrendingDown size={18} />
@@ -77,7 +77,7 @@ export const Analytics: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Highest Price</p>
-            <p className="text-2xl font-display font-bold text-slate-900 dark:text-white">{currencySymbol}{stats.max}</p>
+            <p className="text-3xl font-display font-bold text-rose-600 dark:text-rose-400 text-glow">{currencySymbol}{stats.max}</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
             <TrendingUp size={18} />
