@@ -21,6 +21,12 @@ const App: React.FC = () => {
         if (err.message === 'API_QUOTA_EXCEEDED' || err?.status === 429 || err?.message?.includes('quota')) {
           setError("API Rate Limit Exceeded. Displaying fallback data.");
           setData(getFallbackData('Seattle, WA'));
+        } else if (err.message === 'MODEL_NOT_FOUND') {
+          setError("API Model not found or offline. Displaying fallback data.");
+          setData(getFallbackData('Seattle, WA'));
+        } else if (err.message === 'CONNECTION_TIMEOUT') {
+          setError("Connection timed out. The API took too long to respond. Displaying fallback data.");
+          setData(getFallbackData('Seattle, WA'));
         } else {
           setError("Failed to fetch gas stations. Please try again later.");
         }
@@ -40,10 +46,14 @@ const App: React.FC = () => {
     <div className="crt-scanlines min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 font-sans selection:bg-emerald-500/30">
       <Header />
       <Onboarding />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" role="main">
         {error && (
-          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-3 text-amber-800 dark:text-amber-200">
-            <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+          <div 
+            className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-3 text-amber-800 dark:text-amber-200"
+            role="alert"
+            aria-live="assertive"
+          >
+            <AlertTriangle className="shrink-0 mt-0.5" size={18} aria-hidden="true" />
             <div className="text-sm font-medium">{error}</div>
           </div>
         )}

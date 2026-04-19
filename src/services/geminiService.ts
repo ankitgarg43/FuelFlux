@@ -1,7 +1,18 @@
 import { GoogleGenAI, Type, FunctionDeclaration } from '@google/genai';
 import { GasStationData } from '../store/useAppStore';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+try {
+  if (process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+} catch (e) {
+  console.warn("No Gemini API Key provided. Will use fallback data.");
+}
+
+// Local cache to reduce API calls
+const searchCache = new Map<string, { data: GasStationData[], timestamp: number }>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 const setGasStationsFunc: FunctionDeclaration = {
   name: "setGasStations",
@@ -31,6 +42,14 @@ const setGasStationsFunc: FunctionDeclaration = {
 };
 
 export async function fetchGasStations(query: string, lat?: number, lng?: number): Promise<GasStationData[]> {
+  const cacheKey = `${query.toLowerCase().trim()}_${lat || ''}_${lng || ''}`;
+  const cachedResult = searchCache.get(cacheKey);
+
+  if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_TTL_MS) {
+    console.log("Returning cached data for:", query);
+    return cachedResult.data;
+  }
+
   let prompt = `Find real, current gas stations and their regular gas prices for the search query: "${query}". `;
   if (lat && lng) {
     prompt += `The user's current location is latitude ${lat}, longitude ${lng}. Sort the results by distance from this location. `;
@@ -42,8 +61,16 @@ CRITICAL INSTRUCTIONS:
 3. Return at least 5-10 stations if possible.`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-pro-preview",
+    if (!ai) {
+        throw new Error("API_QUOTA_EXCEEDED"); // Force fallback data if no key
+    }
+
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("CONNECTION_TIMEOUT")), 60000)
+    );
+
+    const apiCallPromise = ai.models.generateContent({
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         tools: [
@@ -55,11 +82,13 @@ CRITICAL INSTRUCTIONS:
       }
     });
 
+    const response = await Promise.race([apiCallPromise, timeoutPromise]) as any;
+
     const functionCall = response.functionCalls?.[0];
     if (functionCall && functionCall.name === 'setGasStations') {
       const args = functionCall.args as any;
       if (args && args.stations) {
-        return args.stations.map((s: any) => ({
+        const stations = args.stations.map((s: any) => ({
           id: Math.random().toString(36).substring(2, 9),
           stationName: s.stationName,
           address: s.address,
@@ -71,6 +100,9 @@ CRITICAL INSTRUCTIONS:
           unit: s.unit as any,
           timestamp: Date.now()
         }));
+
+        searchCache.set(cacheKey, { data: stations, timestamp: Date.now() });
+        return stations;
       }
     }
     return [];
@@ -78,6 +110,12 @@ CRITICAL INSTRUCTIONS:
     console.error("Error fetching gas stations:", error);
     if (error?.status === 429 || error?.message?.includes('429') || error?.message?.includes('quota') || error?.status === 'RESOURCE_EXHAUSTED') {
        throw new Error("API_QUOTA_EXCEEDED");
+    }
+    if (error?.status === 404 || error?.status === 'NOT_FOUND' || error?.message?.includes('NOT_FOUND') || error?.message?.includes('404')) {
+       throw new Error("MODEL_NOT_FOUND");
+    }
+    if (error?.message === 'CONNECTION_TIMEOUT') {
+      throw error;
     }
     throw error;
   }

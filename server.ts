@@ -4,8 +4,15 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import path from 'path';
 
-// Initialize Gemini
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+// Initialize Gemini - allow it to fail silently if no key is present for publishing
+let ai: GoogleGenAI | null = null;
+try {
+  if (process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+} catch (e) {
+  console.warn("No Gemini API Key provided. AI features will be disabled.");
+}
 
 // In-memory database for social features
 interface Comment {
@@ -118,6 +125,10 @@ async function startServer() {
   // 3. Intelligent Analysis (Gemini)
   app.post('/api/analyze', async (req, res) => {
     try {
+      if (!ai) {
+        return res.json({ analysis: "AI Analysis is currently disabled. Please provide an API key." });
+      }
+
       const { title, text } = req.body;
       if (!title) {
         return res.status(400).json({ error: 'Title is required for analysis' });
@@ -129,7 +140,7 @@ async function startServer() {
       Content: ${text || 'No additional content provided.'}`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-preview',
+        model: 'gemini-3-flash-preview',
         contents: prompt,
       });
 
