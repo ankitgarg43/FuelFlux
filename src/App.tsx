@@ -5,6 +5,7 @@ import { FilterPanel } from './components/FilterPanel';
 import { Analytics } from './components/Analytics';
 import { DataGrid } from './components/DataGrid';
 import { Onboarding } from './components/Onboarding';
+import OutlookPanel from './components/OutlookPanel';
 import { fetchGasStations, getSourceNote } from './services/stationService';
 import { AlertTriangle } from 'lucide-react';
 
@@ -62,6 +63,7 @@ const App: React.FC = () => {
             <DataGrid />
           </div>
         </div>
+        <OutlookPanel />
       </main>
     </div>
   );
