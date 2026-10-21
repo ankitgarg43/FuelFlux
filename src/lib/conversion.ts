@@ -27,3 +27,30 @@ export function convertPrice(
   // 4. Convert to target currency
   return priceInTargetUnitUSD * EXCHANGE_RATES[toCurrency];
 }
+
+const CURRENCY_SYMBOLS: Record<Currency, string> = {
+  USD: '$',
+  CAD: 'CA$',
+  EUR: '€',
+};
+
+/**
+ * Renders a city's price in the user's preferred currency and unit.
+ * When the preference matches the city's native format, keep the local
+ * pump convention instead ($X.XXX/gal in the US, XXX.X¢/L in Canada).
+ */
+export function formatCityPrice(
+  price: number,
+  nativeCurrency: Currency,
+  nativeUnit: Unit,
+  prefCurrency: Currency,
+  prefUnit: Unit
+): string {
+  if (prefCurrency === nativeCurrency && prefUnit === nativeUnit) {
+    return nativeCurrency === 'CAD'
+      ? `${(price * 100).toFixed(1)}¢/L`
+      : `$${price.toFixed(3)}/gal`;
+  }
+  const converted = convertPrice(price, nativeCurrency, nativeUnit, prefCurrency, prefUnit);
+  return `${CURRENCY_SYMBOLS[prefCurrency]}${converted.toFixed(2)}${prefUnit === 'Gallon' ? '/gal' : '/L'}`;
+}

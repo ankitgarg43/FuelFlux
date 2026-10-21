@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
             <Fuel size={18} />
           </div>
           <span className="text-xl font-display font-bold tracking-tight text-slate-900 dark:text-white glitch-hover cursor-default">
-            FluxFuel
+            FuelFlux
           </span>
         </div>
         <div className="flex items-center gap-4">

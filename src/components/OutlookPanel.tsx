@@ -9,12 +9,8 @@ import {
   snapshotsFor,
   summarizeLedger,
 } from '../lib/outlook';
-
-function formatNative(city: string, price: number): string {
-  const info = CITY_PRICES.find((c) => c.city === city);
-  if (!info) return price.toFixed(3);
-  return info.currency === 'CAD' ? `${(price * 100).toFixed(1)}¢/L` : `$${price.toFixed(3)}/gal`;
-}
+import { formatCityPrice } from '../lib/conversion';
+import { useAppStore } from '../store/useAppStore';
 
 function DirectionChip({ direction, pct }: { direction: Direction; pct: number }) {
   const styles: Record<Direction, string> = {
@@ -34,6 +30,7 @@ function DirectionChip({ direction, pct }: { direction: Direction; pct: number }
 }
 
 const OutlookPanel: React.FC = () => {
+  const { preferredCurrency, preferredUnit } = useAppStore();
   const ledger = summarizeLedger(PREDICTIONS, HISTORY);
   const gradedByKey = new Map(ledger.graded.map((g) => [`${g.city}|${g.forWeekEnding}`, g]));
   const nextWeek = PREDICTIONS.length > 0 ? PREDICTIONS[PREDICTIONS.length - 1].forWeekEnding : null;
@@ -46,7 +43,8 @@ const OutlookPanel: React.FC = () => {
       </div>
       <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
         A weekly fuel outlook for every covered city. Each call is published in advance and graded in
-        public when the official numbers land — no quiet edits.
+        public when the official numbers land — no quiet edits. Prices use the currency and unit
+        selected in the header.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
@@ -67,7 +65,9 @@ const OutlookPanel: React.FC = () => {
                 <span className="text-xs text-slate-400">Regular</span>
               </div>
               <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-                {current ? formatNative(info.city, current.regular) : '—'}
+                {current
+                  ? formatCityPrice(current.regular, info.currency, info.unit, preferredCurrency, preferredUnit)
+                  : '—'}
               </div>
               <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {trend !== null ? (
