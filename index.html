@@ -2,11 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#020617">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>FuelFlux</title>
+    <title>FuelFlux — Gas Prices in the US & Canada | Weekly EIA & NRCan Data</title>
+    <meta name="description" content="Compare gas prices across 8 US and Canadian cities using official weekly data from the EIA and Natural Resources Canada. Convert USD/CAD and gallons/litres, and check Gas Weather — a weekly fuel outlook with publicly graded predictions. No sign-up, no tracking.">
+    <link rel="canonical" href="https://ankitgarg43.github.io/FuelFlux/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FuelFlux">
+    <meta property="og:title" content="FuelFlux — Gas Prices in the US & Canada">
+    <meta property="og:description" content="Official weekly gas prices (EIA & NRCan) for 8 cities, with currency/unit conversion and a publicly graded weekly outlook.">
+    <meta property="og:url" content="https://ankitgarg43.github.io/FuelFlux/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="FuelFlux — Gas Prices in the US & Canada">
+    <meta name="twitter:description" content="Official weekly gas prices (EIA & NRCan) for 8 cities, with currency/unit conversion and a publicly graded weekly outlook.">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <link rel="manifest" href="./manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -54,19 +65,9 @@
         100% { background-position: 0 100%; }
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-black text-white antialiased overflow-x-hidden">
+  <body class="antialiased overflow-x-hidden">
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

@@ -12,9 +12,6 @@ import { GasStationData } from '../store/useAppStore';
 export function findCity(query: string): CityPriceInfo | undefined {
   const q = query.trim().toLowerCase();
   if (!q) return undefined;
-  // The geolocation flow searches for "Nearby Stations"; default to Seattle,
-  // matching the app's original default city.
-  if (q === 'nearby stations') return CITY_PRICES.find((c) => c.city === 'Seattle');
   return CITY_PRICES.find(
     (c) =>
       q.includes(c.city.toLowerCase()) ||
@@ -23,8 +20,38 @@ export function findCity(query: string): CityPriceInfo | undefined {
   );
 }
 
-export async function fetchGasStations(query: string): Promise<GasStationData[]> {
-  const city = findCity(query);
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+export interface NearestCity {
+  info: CityPriceInfo;
+  distanceKm: number;
+}
+
+/** The covered city closest to the given coordinates. */
+export function findNearestCity(lat: number, lng: number): NearestCity {
+  let best: NearestCity | null = null;
+  for (const info of CITY_PRICES) {
+    const distanceKm = haversineKm(lat, lng, info.lat, info.lng);
+    if (!best || distanceKm < best.distanceKm) best = { info, distanceKm };
+  }
+  return best!;
+}
+
+export async function fetchGasStations(query: string, lat?: number, lng?: number): Promise<GasStationData[]> {
+  // With coordinates (the Detect My Location flow), the nearest covered city
+  // wins — a text query must never override where the user actually is.
+  const city =
+    typeof lat === 'number' && typeof lng === 'number'
+      ? findNearestCity(lat, lng).info
+      : findCity(query);
   if (!city) return [];
 
   const rows: GasStationData[] = [];

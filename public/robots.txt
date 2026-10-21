@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ankitgarg43.github.io/FuelFlux/sitemap.xml

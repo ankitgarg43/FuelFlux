@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Dark mode follows the app's .dark class (the header toggle), not the OS. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
@@ -14,8 +17,25 @@
 }
 
 @layer base {
+  /* Native controls (select popups, scrollbars, form widgets) must follow
+     the app theme — without color-scheme, browsers render dropdown options
+     with light-theme colors on dark backgrounds (invisible white-on-white). */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  select option {
+    background-color: #ffffff;
+    color: #0f172a;
+  }
+  .dark select option {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
   body {
-    @apply font-sans antialiased;
+    @apply font-sans antialiased bg-slate-50 dark:bg-slate-950;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;

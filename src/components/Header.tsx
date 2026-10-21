@@ -18,20 +18,22 @@ export const Header: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 mr-2 md:mr-4 border-r border-slate-200 dark:border-slate-800 pr-4">
-            <select 
+            <select
               value={preferredCurrency}
               onChange={(e) => setPreferences(e.target.value as Currency, preferredUnit)}
-              className="bg-transparent text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer"
+              aria-label="Display currency"
+              className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-1 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
             >
               <option value="USD">USD</option>
               <option value="CAD">CAD</option>
               <option value="EUR">EUR</option>
             </select>
             <span className="text-slate-300 dark:text-slate-700">/</span>
-            <select 
+            <select
               value={preferredUnit}
               onChange={(e) => setPreferences(preferredCurrency, e.target.value as Unit)}
-              className="bg-transparent text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer"
+              aria-label="Display unit"
+              className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-1 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
             >
               <option value="Gallon">Gal</option>
               <option value="Liter">L</option>

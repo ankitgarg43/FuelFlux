@@ -21,6 +21,8 @@ export type FuelGrade = 'Regular' | 'Midgrade' | 'Premium' | 'Diesel';
 export interface CityPriceInfo {
   city: string;
   state: string;
+  lat: number;
+  lng: number;
   currency: Currency;
   unit: Unit;
   source: string;
@@ -34,6 +36,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Seattle',
     state: 'WA',
+    lat: 47.6062,
+    lng: -122.3321,
     currency: 'USD',
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
@@ -45,6 +49,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'New York',
     state: 'NY',
+    lat: 40.7128,
+    lng: -74.006,
     currency: 'USD',
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
@@ -56,6 +62,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Los Angeles',
     state: 'CA',
+    lat: 34.0522,
+    lng: -118.2437,
     currency: 'USD',
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
@@ -67,6 +75,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Chicago',
     state: 'IL',
+    lat: 41.8781,
+    lng: -87.6298,
     currency: 'USD',
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
@@ -78,6 +88,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Houston',
     state: 'TX',
+    lat: 29.7604,
+    lng: -95.3698,
     currency: 'USD',
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
@@ -89,6 +101,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Toronto',
     state: 'ON',
+    lat: 43.6532,
+    lng: -79.3832,
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages',
@@ -100,6 +114,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Mississauga',
     state: 'ON',
+    lat: 43.589,
+    lng: -79.6441,
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages (Toronto)',
@@ -111,6 +127,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
   {
     city: 'Vancouver',
     state: 'BC',
+    lat: 49.2827,
+    lng: -123.1207,
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages',

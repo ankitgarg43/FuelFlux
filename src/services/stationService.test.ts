@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fetchGasStations, findCity, getCoveredCities } from './stationService';
+import { fetchGasStations, findCity, findNearestCity, getCoveredCities } from './stationService';
 
 describe('stationService', () => {
   it('covers 8 cities', () => {
@@ -41,5 +41,19 @@ describe('stationService', () => {
     expect(findCity('M4B 1B3')?.city).toBe('Toronto');
     expect(findCity('L5B 2C9')?.city).toBe('Mississauga');
     await expect(fetchGasStations('Denver, CO')).resolves.toEqual([]);
+  });
+
+  it('finds the nearest covered city from coordinates', () => {
+    // Mississauga (his home turf), Seattle, and Vancouver coordinates
+    expect(findNearestCity(43.589, -79.6441).info.city).toBe('Mississauga');
+    expect(findNearestCity(47.6062, -122.3321).info.city).toBe('Seattle');
+    expect(findNearestCity(49.2827, -123.1207).info.city).toBe('Vancouver');
+    expect(findNearestCity(43.589, -79.6441).distanceKm).toBeLessThan(1);
+  });
+
+  it('coordinates win over the text query in fetchGasStations', async () => {
+    const rows = await fetchGasStations('Nearby Stations', 43.589, -79.6441);
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.every((r) => r.city === 'Mississauga')).toBe(true);
   });
 });

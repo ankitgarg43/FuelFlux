@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { Search, Filter, RefreshCw, MapPin, Loader2 } from 'lucide-react';
-import { fetchGasStations, getCoveredCities } from '../services/stationService';
+import { fetchGasStations, getCoveredCities, findNearestCity } from '../services/stationService';
 
 const FUEL_TYPES = ['Regular', 'Midgrade', 'Premium', 'Diesel'];
 
@@ -29,31 +29,48 @@ export const FilterPanel: React.FC = () => {
   };
 
   const handleDetectLocation = () => {
-    if (navigator.geolocation) {
-      setIsLoading(true);
-      setError(null);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          setLocation({ lat, lng });
-          setFilter('searchQuery', 'Nearby Stations');
-          
-          fetchGasStations('Nearby Stations')
-            .then(results => setData(results))
-            .catch(err => {
-              console.error(err);
-              setError("Failed to fetch nearby gas stations.");
-            })
-            .finally(() => setIsLoading(false));
-        },
-        (err) => {
-          console.error("Geolocation error:", err);
-          setError("Failed to detect location. Please check your permissions.");
-          setIsLoading(false);
-        }
-      );
+    if (!('geolocation' in navigator)) {
+      setError("Location detection isn't available in this browser. Search for a city above instead.");
+      return;
     }
+    setIsLoading(true);
+    setError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        setLocation({ lat, lng });
+        const { info, distanceKm } = findNearestCity(lat, lng);
+        const label = `${info.city}, ${info.state}`;
+        setFilter('searchQuery', label);
+
+        fetchGasStations(label, lat, lng)
+          .then((results) => {
+            setData(results);
+            if (distanceKm > 200) {
+              setError(
+                `No covered city is close to you — showing the nearest, ${label} (~${Math.round(distanceKm)} km away). Covered: ${getCoveredCities().join(' · ')}.`,
+              );
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            setError("Failed to fetch nearby gas stations.");
+          })
+          .finally(() => setIsLoading(false));
+      },
+      (err) => {
+        console.error("Geolocation error:", err);
+        setIsLoading(false);
+        if (err.code === err.PERMISSION_DENIED) {
+          setError("Location permission was denied. Allow location access in your browser's site settings, or search for a city above.");
+        } else if (err.code === err.TIMEOUT) {
+          setError("Location detection timed out. Try again, or search for a city above.");
+        } else {
+          setError("Couldn't detect your location. Search for a city above instead.");
+        }
+      },
+      { timeout: 10000, maximumAge: 300000 },
+    );
   };
 
   const handleReset = () => {
