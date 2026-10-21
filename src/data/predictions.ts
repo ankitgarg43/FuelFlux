@@ -18,4 +18,9 @@ export const PREDICTIONS: Prediction[] = [
   { city: 'Toronto', issuedOn: 'Oct 20, 2026', forWeekEnding: 'Oct 26, 2026', predictedChangePct: 0, direction: 'Steady', basis: 'baseline' },
   { city: 'Mississauga', issuedOn: 'Oct 20, 2026', forWeekEnding: 'Oct 26, 2026', predictedChangePct: 0, direction: 'Steady', basis: 'baseline' },
   { city: 'Vancouver', issuedOn: 'Oct 20, 2026', forWeekEnding: 'Oct 26, 2026', predictedChangePct: 0, direction: 'Steady', basis: 'baseline' },
+
+  // Issued Oct 21, 2026 — for week ending Oct 28, 2026 (Edition #2)
+  { city: 'Toronto', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: -0.6, direction: 'Falling', basis: 'trend' },
+  { city: 'Vancouver', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: 0.2, direction: 'Steady', basis: 'trend' },
+  { city: 'Mississauga', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: -0.6, direction: 'Falling', basis: 'trend' },
 ];

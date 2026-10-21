@@ -18,7 +18,7 @@ export type FuelGrade = 'Regular' | 'Midgrade' | 'Premium' | 'Diesel';
  * Refreshed weekly by scripts/refresh.mjs (scheduled GitHub Action). For a
  * manual refresh: update `averages` + `weekEnding` here, append a snapshot
  * to history.ts, and append the new outlook calls to predictions.ts.
- * Last refreshed: Oct 21, 2026 (manual — EIA workbook values at source precision)
+ * Last refreshed: Oct 21, 2026 (automated — scripts/refresh.mjs)
  */
 export interface CityPriceInfo {
   city: string;
@@ -108,8 +108,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages',
-    weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 1.771, Midgrade: 1.979, Premium: 2.083, Diesel: 2.611 },
+    weekEnding: 'Oct 21, 2026',
+    averages: { Regular: 1.761, Midgrade: 1.97, Premium: 2.072, Diesel: 2.609 },
     aliases: ['toronto', 'scarborough', 'north york', 'etobicoke'],
     zipPrefixes: ['m'],
   },
@@ -121,8 +121,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages (Toronto)',
-    weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 1.771, Midgrade: 1.979, Premium: 2.083, Diesel: 2.611 },
+    weekEnding: 'Oct 21, 2026',
+    averages: { Regular: 1.761, Midgrade: 1.97, Premium: 2.072, Diesel: 2.609 },
     aliases: ['mississauga'],
     zipPrefixes: ['l4', 'l5'],
   },
@@ -134,8 +134,8 @@ export const CITY_PRICES: CityPriceInfo[] = [
     currency: 'CAD',
     unit: 'Liter',
     source: 'Natural Resources Canada weekly averages',
-    weekEnding: 'Oct 20, 2026',
-    averages: { Regular: 2.055, Midgrade: 2.234, Premium: 2.318, Diesel: 2.946 },
+    weekEnding: 'Oct 21, 2026',
+    averages: { Regular: 2.06, Midgrade: 2.24, Premium: 2.323, Diesel: 2.949 },
     aliases: ['vancouver', 'burnaby', 'richmond'],
     zipPrefixes: ['v'],
   },
