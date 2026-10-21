@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { fetchGasStations, findCity, findNearestCity, getCoveredCities } from './stationService';
+import { CITY_PRICES } from '../data/fuelData';
 
 describe('stationService', () => {
   it('covers 8 cities', () => {
@@ -14,11 +15,13 @@ describe('stationService', () => {
     expect(rows.every((r) => r.city === 'Toronto')).toBe(true);
     expect(rows.every((r) => r.currency === 'CAD' && r.unit === 'Liter')).toBe(true);
 
-    // NRCan Toronto regular anchor: 1.771 CAD/L; station spreads stay within 6 cents
+    // Stations cluster on the official city average (max offset 0.05);
+    // anchor to fuelData dynamically so the weekly refresh can't break this.
+    const anchor = CITY_PRICES.find((c) => c.city === 'Toronto')!.averages.Regular;
     const regular = rows.filter((r) => r.fuelType === 'Regular');
     expect(regular.length).toBe(7);
     for (const r of regular) {
-      expect(Math.abs(r.price - 1.771)).toBeLessThanOrEqual(0.06);
+      expect(Math.abs(r.price - anchor)).toBeLessThanOrEqual(0.06);
     }
   });
 

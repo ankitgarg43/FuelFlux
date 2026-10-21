@@ -5,18 +5,20 @@ export type FuelGrade = 'Regular' | 'Midgrade' | 'Premium' | 'Diesel';
 /**
  * Official weekly average fuel prices per covered city.
  *
- * Sources (fetched Oct 20, 2026):
- * - US cities: U.S. EIA weekly retail survey, week ending Oct 19, 2026.
- *   Regular is the EIA city series. Midgrade/Premium use EIA national grade
- *   spreads (+$0.60 / +$1.00 over Regular) because EIA does not publish those
- *   grades by city. Diesel is the EIA PADD-district average for the city's
- *   district, except Los Angeles, which uses the California series.
+ * Sources:
+ * - US cities: U.S. EIA weekly retail survey workbooks (pswrgvwall.xls for
+ *   gasoline, psw18vwall.xls for diesel). Regular/Midgrade/Premium are the
+ *   EIA city series; Diesel is the EIA ultra-low-sulfur PADD-district series
+ *   for the city's district (West Coast excl. California for Seattle,
+ *   California state series for Los Angeles).
  * - Canadian cities: Natural Resources Canada weekly average retail prices
  *   (cents/litre converted to $/L). Mississauga is not surveyed by NRCan, so
  *   it uses Toronto's numbers (same GTA market).
  *
- * To refresh: update `averages` and `weekEnding` from the latest EIA / NRCan
- * weekly releases and commit. No API key is required.
+ * Refreshed weekly by scripts/refresh.mjs (scheduled GitHub Action). For a
+ * manual refresh: update `averages` + `weekEnding` here, append a snapshot
+ * to history.ts, and append the new outlook calls to predictions.ts.
+ * Last refreshed: Oct 21, 2026 (manual — EIA workbook values at source precision)
  */
 export interface CityPriceInfo {
   city: string;
@@ -42,7 +44,7 @@ export const CITY_PRICES: CityPriceInfo[] = [
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
     weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 5.528, Midgrade: 6.128, Premium: 6.528, Diesel: 7.24 },
+    averages: { Regular: 5.527, Midgrade: 6.025, Premium: 6.071, Diesel: 6.659 },
     aliases: ['seattle', 'tacoma', 'bellevue'],
     zipPrefixes: ['981', '980'],
   },
@@ -55,7 +57,7 @@ export const CITY_PRICES: CityPriceInfo[] = [
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
     weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 4.25, Midgrade: 4.85, Premium: 5.25, Diesel: 5.91 },
+    averages: { Regular: 4.249, Midgrade: 4.848, Premium: 5.186, Diesel: 5.984 },
     aliases: ['new york', 'nyc', 'manhattan', 'brooklyn', 'queens', 'bronx'],
     zipPrefixes: ['100', '101', '112', '113', '104'],
   },
@@ -68,7 +70,7 @@ export const CITY_PRICES: CityPriceInfo[] = [
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
     weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 6.02, Midgrade: 6.62, Premium: 7.02, Diesel: 8.091 },
+    averages: { Regular: 6.021, Midgrade: 6.389, Premium: 6.48, Diesel: 8.242 },
     aliases: ['los angeles', 'la', 'hollywood', 'santa monica'],
     zipPrefixes: ['900', '901', '902'],
   },
@@ -81,7 +83,7 @@ export const CITY_PRICES: CityPriceInfo[] = [
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
     weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 4.705, Midgrade: 5.305, Premium: 5.705, Diesel: 6.26 },
+    averages: { Regular: 4.705, Midgrade: 5.313, Premium: 5.991, Diesel: 6.352 },
     aliases: ['chicago'],
     zipPrefixes: ['606', '607', '608'],
   },
@@ -94,7 +96,7 @@ export const CITY_PRICES: CityPriceInfo[] = [
     unit: 'Gallon',
     source: 'EIA weekly retail survey',
     weekEnding: 'Oct 19, 2026',
-    averages: { Regular: 3.71, Midgrade: 4.31, Premium: 4.71, Diesel: 5.81 },
+    averages: { Regular: 3.71, Midgrade: 4.341, Premium: 4.686, Diesel: 5.903 },
     aliases: ['houston'],
     zipPrefixes: ['770', '771', '772'],
   },

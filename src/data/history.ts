@@ -31,9 +31,9 @@ export const HISTORY: HistorySnapshot[] = [
   { city: 'Houston', weekEnding: 'Sep 21, 2026', regular: 3.863 },
 
   // Week ending Oct 19, 2026 — all cities (EIA / NRCan, = fuelData.ts)
-  { city: 'Seattle', weekEnding: 'Oct 19, 2026', regular: 5.528 },
-  { city: 'New York', weekEnding: 'Oct 19, 2026', regular: 4.25 },
-  { city: 'Los Angeles', weekEnding: 'Oct 19, 2026', regular: 6.02 },
+  { city: 'Seattle', weekEnding: 'Oct 19, 2026', regular: 5.527 },
+  { city: 'New York', weekEnding: 'Oct 19, 2026', regular: 4.249 },
+  { city: 'Los Angeles', weekEnding: 'Oct 19, 2026', regular: 6.021 },
   { city: 'Chicago', weekEnding: 'Oct 19, 2026', regular: 4.705 },
   { city: 'Houston', weekEnding: 'Oct 19, 2026', regular: 3.71 },
   { city: 'Toronto', weekEnding: 'Oct 19, 2026', regular: 1.771 },
