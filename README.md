@@ -21,4 +21,19 @@ View your app in AI Studio: https://ai.studio/apps/e8d3b790-2134-478b-8780-be72c
 No API key is needed. Gas prices ship with the app in `src/data/fuelData.ts`,
 sourced from official weekly averages — the U.S. EIA weekly retail survey for
 US cities and Natural Resources Canada weekly averages for Canadian cities.
-To refresh prices, update that file with the latest weekly numbers.
+
+## Data refresh (automated)
+
+A scheduled GitHub Action (`.github/workflows/weekly-refresh.yml`, Wednesdays)
+runs `scripts/refresh.mjs`, which downloads EIA's weekly workbooks and NRCan's
+price page, updates `fuelData.ts`, appends history snapshots, and issues the
+next Gas Weather calls — then commits and triggers a redeploy. Run it locally
+with `npm run refresh` (`--dry-run` to preview). No API keys anywhere.
+
+## Free embeddable widget
+
+Anyone can put FuelFlux prices + the Gas Weather outlook on their site with
+one iframe line (see the "Embed FuelFlux" section on the live page). The
+widget (`public/widget.html`) reads `data.json`, a JSON feed regenerated from
+the app's own data on every build (`scripts/emit-data.mjs`). Free to use with
+attribution; no key, no tracking.

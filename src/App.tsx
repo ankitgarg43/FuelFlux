@@ -6,6 +6,7 @@ import { Analytics } from './components/Analytics';
 import { DataGrid } from './components/DataGrid';
 import { Onboarding } from './components/Onboarding';
 import OutlookPanel from './components/OutlookPanel';
+import { EmbedCard } from './components/EmbedCard';
 import { fetchGasStations, getSourceNote } from './services/stationService';
 import { AlertTriangle } from 'lucide-react';
 
@@ -64,6 +65,7 @@ const App: React.FC = () => {
           </div>
         </div>
         <OutlookPanel />
+        <EmbedCard />
       </main>
     </div>
   );
