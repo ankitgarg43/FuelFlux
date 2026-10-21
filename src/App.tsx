@@ -5,11 +5,11 @@ import { FilterPanel } from './components/FilterPanel';
 import { Analytics } from './components/Analytics';
 import { DataGrid } from './components/DataGrid';
 import { Onboarding } from './components/Onboarding';
-import { fetchGasStations, getFallbackData } from './services/geminiService';
+import { fetchGasStations, getSourceNote } from './services/stationService';
 import { AlertTriangle } from 'lucide-react';
 
 const App: React.FC = () => {
-  const { theme, setData, setIsLoading, error, setError } = useAppStore();
+  const { theme, setData, setIsLoading, error, setError, filters } = useAppStore();
 
   useEffect(() => {
     setIsLoading(true);
@@ -18,21 +18,12 @@ const App: React.FC = () => {
       .then(results => setData(results))
       .catch(err => {
         console.error(err);
-        if (err.message === 'API_QUOTA_EXCEEDED' || err?.status === 429 || err?.message?.includes('quota')) {
-          setError("API Rate Limit Exceeded. Displaying fallback data.");
-          setData(getFallbackData('Seattle, WA'));
-        } else if (err.message === 'MODEL_NOT_FOUND') {
-          setError("API Model not found or offline. Displaying fallback data.");
-          setData(getFallbackData('Seattle, WA'));
-        } else if (err.message === 'CONNECTION_TIMEOUT') {
-          setError("Connection timed out. The API took too long to respond. Displaying fallback data.");
-          setData(getFallbackData('Seattle, WA'));
-        } else {
-          setError("Failed to fetch gas stations. Please try again later.");
-        }
+        setError("Failed to load gas stations. Please try again later.");
       })
       .finally(() => setIsLoading(false));
   }, [setData, setIsLoading, setError]);
+
+  const sourceNote = getSourceNote(filters.searchQuery);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -56,6 +47,9 @@ const App: React.FC = () => {
             <AlertTriangle className="shrink-0 mt-0.5" size={18} aria-hidden="true" />
             <div className="text-sm font-medium">{error}</div>
           </div>
+        )}
+        {sourceNote && (
+          <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">{sourceNote}</p>
         )}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">

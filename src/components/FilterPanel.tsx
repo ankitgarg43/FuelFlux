@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { Search, Filter, RefreshCw, MapPin, Loader2 } from 'lucide-react';
-import { fetchGasStations, getFallbackData } from '../services/geminiService';
+import { fetchGasStations, getCoveredCities } from '../services/stationService';
 
 const FUEL_TYPES = ['Regular', 'Midgrade', 'Premium', 'Diesel'];
 
@@ -15,22 +15,14 @@ export const FilterPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const results = await fetchGasStations(filters.searchQuery, location?.lat, location?.lng);
+      const results = await fetchGasStations(filters.searchQuery);
       setData(results);
+      if (results.length === 0) {
+        setError(`No price data for "${filters.searchQuery}" yet. Covered cities: ${getCoveredCities().join(' · ')}.`);
+      }
     } catch (error: any) {
       console.error("Failed to fetch stations", error);
-      if (error.message === 'API_QUOTA_EXCEEDED' || error?.status === 429 || error?.message?.includes('quota')) {
-        setError("API Rate Limit Exceeded. Displaying fallback data.");
-        setData(getFallbackData(filters.searchQuery));
-      } else if (error.message === 'MODEL_NOT_FOUND') {
-        setError(`API Model not found. Displaying fallback data for ${filters.searchQuery}.`);
-        setData(getFallbackData(filters.searchQuery));
-      } else if (error.message === 'CONNECTION_TIMEOUT') {
-        setError(`Connection timed out searching for ${filters.searchQuery}. Displaying fallback data.`);
-        setData(getFallbackData(filters.searchQuery));
-      } else {
-        setError("Failed to fetch gas stations. Please try again later.");
-      }
+      setError("Failed to fetch gas stations. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -47,22 +39,11 @@ export const FilterPanel: React.FC = () => {
           setLocation({ lat, lng });
           setFilter('searchQuery', 'Nearby Stations');
           
-          fetchGasStations('Nearby Stations', lat, lng)
+          fetchGasStations('Nearby Stations')
             .then(results => setData(results))
             .catch(err => {
               console.error(err);
-              if (err.message === 'API_QUOTA_EXCEEDED' || err?.status === 429 || err?.message?.includes('quota')) {
-                setError("API Rate Limit Exceeded. Displaying fallback data.");
-                setData(getFallbackData('Nearby Stations'));
-              } else if (err.message === 'MODEL_NOT_FOUND') {
-                setError("API Model not found. Displaying fallback data for Nearby Stations.");
-                setData(getFallbackData('Nearby Stations'));
-              } else if (err.message === 'CONNECTION_TIMEOUT') {
-                setError("Connection timed out looking for nearby stations. Displaying fallback data.");
-                setData(getFallbackData('Nearby Stations'));
-              } else {
-                setError("Failed to fetch nearby gas stations.");
-              }
+              setError("Failed to fetch nearby gas stations.");
             })
             .finally(() => setIsLoading(false));
         },

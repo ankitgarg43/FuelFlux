@@ -15,6 +15,10 @@ View your app in AI Studio: https://ai.studio/apps/e8d3b790-2134-478b-8780-be72c
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Run the app:
    `npm run dev`
+
+No API key is needed. Gas prices ship with the app in `src/data/fuelData.ts`,
+sourced from official weekly averages — the U.S. EIA weekly retail survey for
+US cities and Natural Resources Canada weekly averages for Canadian cities.
+To refresh prices, update that file with the latest weekly numbers.
