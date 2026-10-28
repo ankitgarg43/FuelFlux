@@ -23,4 +23,14 @@ export const PREDICTIONS: Prediction[] = [
   { city: 'Toronto', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: -0.6, direction: 'Falling', basis: 'trend' },
   { city: 'Vancouver', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: 0.2, direction: 'Steady', basis: 'trend' },
   { city: 'Mississauga', issuedOn: 'Oct 21, 2026', forWeekEnding: 'Oct 28, 2026', predictedChangePct: -0.6, direction: 'Falling', basis: 'trend' },
+
+  // Issued Oct 28, 2026 — for week ending Nov 2, 2026 (Edition #3)
+  { city: 'Seattle', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 2, 2026', predictedChangePct: -1, direction: 'Falling', basis: 'trend' },
+  { city: 'New York', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 2, 2026', predictedChangePct: -1.1, direction: 'Falling', basis: 'trend' },
+  { city: 'Los Angeles', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 2, 2026', predictedChangePct: -0.3, direction: 'Steady', basis: 'trend' },
+  { city: 'Chicago', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 2, 2026', predictedChangePct: 0.1, direction: 'Steady', basis: 'trend' },
+  { city: 'Houston', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 2, 2026', predictedChangePct: -1, direction: 'Falling', basis: 'trend' },
+  { city: 'Toronto', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 4, 2026', predictedChangePct: -0.5, direction: 'Falling', basis: 'trend' },
+  { city: 'Vancouver', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 4, 2026', predictedChangePct: -0.7, direction: 'Falling', basis: 'trend' },
+  { city: 'Mississauga', issuedOn: 'Oct 28, 2026', forWeekEnding: 'Nov 4, 2026', predictedChangePct: -0.5, direction: 'Falling', basis: 'trend' },
 ];
