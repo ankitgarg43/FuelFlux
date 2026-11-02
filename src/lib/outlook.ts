@@ -30,6 +30,30 @@ export interface Prediction {
 export const STEADY_BAND_PCT = 0.5;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
+/**
+ * Grading substitutions — openly declared, decided Nov 2, 2026.
+ *
+ * Edition #1 (issued Oct 20, 2026) set the Canadian cities' target week to
+ * "Oct 26, 2026" — the US EIA cadence. NRCan publishes on a different
+ * cadence (weeks ending Oct 19, Oct 21, Oct 28, …), so no NRCan snapshot for
+ * a week ending Oct 26 exists or ever will, and those three calls could
+ * never grade. Rather than leave them Pending forever — or quietly edit the
+ * issued calls, which the ledger forbids — they are graded against the next
+ * NRCan snapshot (week ending Oct 28, 2026, measured from the Oct 21
+ * snapshot). The substitution is disclosed in the ledger UI and carried on
+ * each graded record itself.
+ */
+export const GRADING_SUBSTITUTIONS: Record<string, string> = {
+  'Toronto|Oct 26, 2026': 'Oct 28, 2026',
+  'Mississauga|Oct 26, 2026': 'Oct 28, 2026',
+  'Vancouver|Oct 26, 2026': 'Oct 28, 2026',
+};
+
+/** The week a prediction is actually graded against (its own week, unless substituted). */
+export function gradingWeekEndingFor(p: Prediction): string {
+  return GRADING_SUBSTITUTIONS[`${p.city}|${p.forWeekEnding}`] ?? p.forWeekEnding;
+}
+
 export function directionFor(changePct: number): Direction {
   if (changePct >= STEADY_BAND_PCT) return 'Rising';
   if (changePct <= -STEADY_BAND_PCT) return 'Falling';
@@ -80,11 +104,14 @@ export interface GradedPrediction extends Prediction {
   actualChangePct: number;
   directionCorrect: boolean;
   absErrorPct: number;
+  /** The week the grade was measured against — differs from forWeekEnding only for a declared substitution. */
+  gradedAgainstWeekEnding: string;
 }
 
 export function gradePrediction(p: Prediction, history: HistorySnapshot[]): GradedPrediction | null {
   const snaps = snapshotsFor(p.city, history);
-  const idx = snaps.findIndex((s) => s.weekEnding === p.forWeekEnding);
+  const targetWeek = gradingWeekEndingFor(p);
+  const idx = snaps.findIndex((s) => s.weekEnding === targetWeek);
   if (idx <= 0) return null; // target week not published yet (or no prior snapshot)
   const prev = snaps[idx - 1];
   const actual = snaps[idx];
@@ -95,6 +122,7 @@ export function gradePrediction(p: Prediction, history: HistorySnapshot[]): Grad
     actualChangePct: Math.round(actualWeeklyPct * 10) / 10,
     directionCorrect: directionFor(actualWeeklyPct) === p.direction,
     absErrorPct: Math.round(Math.abs(actualWeeklyPct - p.predictedChangePct) * 10) / 10,
+    gradedAgainstWeekEnding: targetWeek,
   };
 }
 

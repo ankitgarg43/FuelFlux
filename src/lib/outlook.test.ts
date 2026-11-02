@@ -92,4 +92,49 @@ describe('grading', () => {
     expect(s.directionHits).toBe(0);
     expect(s.pending.length).toBe(0);
   });
+
+  it('records the graded week on an ordinary grade', () => {
+    const h = hist([
+      ['Seattle', 'Oct 19, 2026', 5.528],
+      ['Seattle', 'Oct 26, 2026', 5.47],
+    ]);
+    const g = gradePrediction(prediction, h)!;
+    expect(g.gradedAgainstWeekEnding).toBe('Oct 26, 2026');
+  });
+});
+
+describe('grading substitutions (Edition #1 Canadian calls)', () => {
+  const torontoCall: Prediction = {
+    city: 'Toronto',
+    issuedOn: 'Oct 20, 2026',
+    forWeekEnding: 'Oct 26, 2026', // no NRCan week ends Oct 26 — cadence lands Oct 28
+    predictedChangePct: 0,
+    direction: 'Steady',
+    basis: 'baseline',
+  };
+  const canadianHistory = hist([
+    ['Toronto', 'Oct 21, 2026', 1.761],
+    ['Toronto', 'Oct 28, 2026', 1.763], // +0.1% — Steady holds
+    ['Vancouver', 'Oct 21, 2026', 2.06],
+    ['Vancouver', 'Oct 28, 2026', 2.04], // -1.0% — Steady misses
+  ]);
+
+  it('grades the Oct 26 call against the Oct 28 NRCan snapshot, disclosed on the record', () => {
+    const g = gradePrediction(torontoCall, canadianHistory)!;
+    expect(g.gradedAgainstWeekEnding).toBe('Oct 28, 2026');
+    expect(g.actualChangePct).toBeCloseTo(0.1, 1);
+    expect(g.directionCorrect).toBe(true);
+  });
+
+  it('grades a substituted miss as a miss', () => {
+    const vancouverCall: Prediction = { ...torontoCall, city: 'Vancouver' };
+    const g = gradePrediction(vancouverCall, canadianHistory)!;
+    expect(g.actualChangePct).toBeCloseTo(-1.0, 1);
+    expect(g.directionCorrect).toBe(false);
+  });
+
+  it('stays pending if the substitute week has not landed either', () => {
+    const h = hist([['Toronto', 'Oct 21, 2026', 1.761]]);
+    expect(gradePrediction(torontoCall, h)).toBeNull();
+  });
 });

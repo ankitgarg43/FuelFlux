@@ -142,6 +142,12 @@ const OutlookPanel: React.FC = () => {
                           ? `✓ Direction hit (actual ${g.actualChangePct > 0 ? '+' : ''}${g.actualChangePct.toFixed(1)}%)`
                           : `✗ Missed (actual ${g.actualChangePct > 0 ? '+' : ''}${g.actualChangePct.toFixed(1)}%)`
                         : 'Pending'}
+                      {g && g.gradedAgainstWeekEnding !== g.forWeekEnding && (
+                        <span title={`Graded against the week ending ${g.gradedAgainstWeekEnding} — see note below`}>
+                          {' '}
+                          *
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );
@@ -155,6 +161,14 @@ const OutlookPanel: React.FC = () => {
           baseline "no change" call — the benchmark forecasters are judged against. A simple,
           transparent model; an outlook is a tendency, not a guarantee.
         </p>
+        {ledger.graded.some((g) => g.gradedAgainstWeekEnding !== g.forWeekEnding) && (
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+            * Graded against a substitute week, openly: Edition #1 set the Canadian target week to
+            Oct 26, 2026 (the US EIA cadence), but NRCan publishes no week ending Oct 26 — its cadence
+            lands Oct 28. Those three calls are graded against the NRCan week ending Oct 28, 2026
+            instead of staying Pending forever. The issued calls themselves are unchanged.
+          </p>
+        )}
       </div>
     </section>
   );
