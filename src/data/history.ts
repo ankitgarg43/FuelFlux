@@ -54,4 +54,14 @@ export const HISTORY: HistorySnapshot[] = [
   { city: 'Toronto', weekEnding: 'Oct 28, 2026', regular: 1.763 },
   { city: 'Vancouver', weekEnding: 'Oct 28, 2026', regular: 2.04 },
   { city: 'Mississauga', weekEnding: 'Oct 28, 2026', regular: 1.763 },
+
+  // Week ending Nov 2, 2026 / Nov 4, 2026 — appended by scripts/refresh.mjs
+  { city: 'Seattle', weekEnding: 'Nov 2, 2026', regular: 5.283 },
+  { city: 'New York', weekEnding: 'Nov 2, 2026', regular: 4.114 },
+  { city: 'Los Angeles', weekEnding: 'Nov 2, 2026', regular: 5.742 },
+  { city: 'Chicago', weekEnding: 'Nov 2, 2026', regular: 4.706 },
+  { city: 'Houston', weekEnding: 'Nov 2, 2026', regular: 3.625 },
+  { city: 'Toronto', weekEnding: 'Nov 4, 2026', regular: 1.68 },
+  { city: 'Vancouver', weekEnding: 'Nov 4, 2026', regular: 1.96 },
+  { city: 'Mississauga', weekEnding: 'Nov 4, 2026', regular: 1.68 },
 ];
