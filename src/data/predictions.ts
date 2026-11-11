@@ -43,4 +43,14 @@ export const PREDICTIONS: Prediction[] = [
   { city: 'Toronto', issuedOn: 'Nov 4, 2026', forWeekEnding: 'Nov 11, 2026', predictedChangePct: -2.6, direction: 'Falling', basis: 'trend' },
   { city: 'Vancouver', issuedOn: 'Nov 4, 2026', forWeekEnding: 'Nov 11, 2026', predictedChangePct: -2.3, direction: 'Falling', basis: 'trend' },
   { city: 'Mississauga', issuedOn: 'Nov 4, 2026', forWeekEnding: 'Nov 11, 2026', predictedChangePct: -2.6, direction: 'Falling', basis: 'trend' },
+
+  // Issued Nov 11, 2026 — for week ending Nov 16, 2026 (Edition #5)
+  { city: 'Seattle', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 16, 2026', predictedChangePct: -1.6, direction: 'Falling', basis: 'trend' },
+  { city: 'New York', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 16, 2026', predictedChangePct: -1.3, direction: 'Falling', basis: 'trend' },
+  { city: 'Los Angeles', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 16, 2026', predictedChangePct: -1, direction: 'Falling', basis: 'trend' },
+  { city: 'Chicago', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 16, 2026', predictedChangePct: -1.3, direction: 'Falling', basis: 'trend' },
+  { city: 'Houston', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 16, 2026', predictedChangePct: -1.4, direction: 'Falling', basis: 'trend' },
+  { city: 'Toronto', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 17, 2026', predictedChangePct: -2.7, direction: 'Falling', basis: 'trend' },
+  { city: 'Vancouver', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 17, 2026', predictedChangePct: -2.8, direction: 'Falling', basis: 'trend' },
+  { city: 'Mississauga', issuedOn: 'Nov 11, 2026', forWeekEnding: 'Nov 17, 2026', predictedChangePct: -2.7, direction: 'Falling', basis: 'trend' },
 ];
